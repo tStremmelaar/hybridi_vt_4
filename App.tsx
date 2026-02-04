@@ -16,7 +16,6 @@ export default function App() {
     async function retrieveList() {
       try {
         const jsonList = await AsyncStorage.getItem(key)
-        console.log('loaded: ' + jsonList)
         let newList: item[]
         if (jsonList != null) {
           newList = await JSON.parse(jsonList)
@@ -35,17 +34,15 @@ export default function App() {
     async function storeList() {
       try {
         const jsonList = JSON.stringify(list)
-        console.log('saved: ' + jsonList)
         await AsyncStorage.setItem(key, jsonList)
       } catch (e) {
         console.error('could not save list: ' + e)
       }
     }
-    console.log('save: ' + listState.save)
     if (listState.save) {
       storeList()
     }
-  }, [list])
+  }, [listState])
 
   function setList(list: item[], save: boolean = true) {
     setListState({list, save})
