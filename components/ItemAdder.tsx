@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { itemAdderProps } from "../types";
-import { Ref, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export default function ItemAdder({props}: {props: itemAdderProps}) {
   const [text, setText] = useState<string>('')
