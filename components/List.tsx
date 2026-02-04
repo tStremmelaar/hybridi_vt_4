@@ -1,11 +1,13 @@
 import { FlatList, Pressable, StyleSheet, Text } from "react-native";
 import { listProps } from "../types";
+import { useRef } from "react";
 
 export default function List({props}: {props: listProps}) {
   const list = props.list
 
   return (
     <FlatList
+    ref={props.listRef}
       data={list}
       renderItem={({item}) =>
         <Pressable onPress={() => props.toggleDone(item.id)}>
