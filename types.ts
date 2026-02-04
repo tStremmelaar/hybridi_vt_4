@@ -4,6 +4,11 @@ export type item = {
   done: boolean
 }
 
+export type listState = {
+  list: item[]
+  startSaving: boolean
+}
+
 export type itemAdderProps = {
   add: (text: string) => void
 }

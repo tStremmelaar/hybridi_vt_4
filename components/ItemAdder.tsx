@@ -7,8 +7,10 @@ export default function ItemAdder({props}: {props: itemAdderProps}) {
   const inputRef = useRef<TextInput>(null)
 
   function submit() {
-    props.add(text)
-    setText('')
+    if (text && text.trim()) {
+      props.add(text)
+      setText('')
+    }
   }
 
   return(

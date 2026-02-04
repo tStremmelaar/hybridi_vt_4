@@ -1,18 +1,62 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { item, itemAdderProps, listProps } from './types';
+import { item, itemAdderProps, listProps, listState } from './types';
 import List from './components/List';
 import ItemAdder from './components/ItemAdder';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
-  const [list, setList] = useState<item[]>([{id: 0, text: 'Hello, World!', done: false}, {id: 1, text: 'Hello, you!', done: true}])
+  const [listState, setListState] = useState<listState>({list: [], save: false})
+  const key = 'list-key'
+  const list = listState.list
 
-  const ids = list.map(i => i.id)
+  useEffect(() => {
+    async function retrieveList() {
+      try {
+        const jsonList = await AsyncStorage.getItem(key)
+        console.log('loaded: ' + jsonList)
+        let newList: item[]
+        if (jsonList != null) {
+          newList = await JSON.parse(jsonList)
+        } else {
+          newList = []
+        }
+        setList(newList, false)
+      } catch (e) {
+        console.error('could not load list: ' + e)
+      }
+    }
+    retrieveList()
+  }, [])
+
+  useEffect(() => {
+    async function storeList() {
+      try {
+        const jsonList = JSON.stringify(list)
+        console.log('saved: ' + jsonList)
+        await AsyncStorage.setItem(key, jsonList)
+      } catch (e) {
+        console.error('could not save list: ' + e)
+      }
+    }
+    console.log('save: ' + listState.save)
+    if (listState.save) {
+      storeList()
+    }
+  }, [list])
+
+  function setList(list: item[], save: boolean = true) {
+    setListState({list, save})
+  }
 
   function addItem(text: string): void {
-    const id = Math.max(...ids) + 1
+    let id = 0
+    if (list.length !== 0) {
+      const ids = list.map(i => i.id)
+      id = Math.max(...ids) + 1
+    }
     const item: item = {id: id, text: text, done: false}
     setList([...list, item])
   }
